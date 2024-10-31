@@ -27,6 +27,8 @@ import ast
 import os
 import sys
 
+from packaging.version import Version, parse
+
 try:
     from setuptools import __version__ as setuptools_version
     from setuptools import Command
@@ -39,8 +41,7 @@ except ImportError:
     )
 
 
-setuptools_version_tuple = tuple(int(x) for x in setuptools_version.split("."))
-if setuptools_version_tuple < (70, 1) and "bdist_wheel" in sys.argv:
+if parse(setuptools_version) < Version("70.1") and "bdist_wheel" in sys.argv:
     # Check for presence of wheel in setuptools < 70.1
     # Before setuptools 70.1, wheel is needed to make a bdist_wheel.
     # Since 70.1 was released including
@@ -268,6 +269,7 @@ setup(
     packages=PACKAGES,
     ext_modules=EXTENSIONS,
     include_package_data=True,  # done via MANIFEST.in under setuptools
+    setup_requires=["packaging"],
     install_requires=REQUIRES,
     python_requires=">=%i.%i" % MIN_PY_VER,
 )
